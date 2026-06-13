@@ -12,6 +12,8 @@ APP_DIR="/opt/infra-demo"
 LOG_DIR="/var/log/infra-demo"
 ENV_FILE="/etc/infra-demo.env"
 SSHD_DROPIN="/etc/ssh/sshd_config.d/99-infra-hardening.conf"
+INFRA_HOSTNAME="${INFRA_HOSTNAME:-}"
+INFRA_TIMEZONE="${INFRA_TIMEZONE:-}"
 
 source /etc/os-release
 if [[ "${ID}" != "ubuntu" || "${VERSION_ID}" != "24.04" ]]; then
@@ -32,6 +34,20 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
   git \
   ufw \
   openssh-server
+
+if [[ -n "${INFRA_HOSTNAME}" ]]; then
+  echo "Setting hostname to ${INFRA_HOSTNAME}"
+  hostnamectl set-hostname "${INFRA_HOSTNAME}"
+else
+  echo "Hostname unchanged; set INFRA_HOSTNAME to opt in"
+fi
+
+if [[ -n "${INFRA_TIMEZONE}" ]]; then
+  echo "Setting timezone to ${INFRA_TIMEZONE}"
+  timedatectl set-timezone "${INFRA_TIMEZONE}"
+else
+  echo "Timezone unchanged; set INFRA_TIMEZONE to opt in"
+fi
 
 echo "Creating operational user"
 if id "${APP_USER}" >/dev/null 2>&1; then

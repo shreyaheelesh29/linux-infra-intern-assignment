@@ -1,20 +1,15 @@
 # Evidence Guide
 
-Save screenshots or command output for each milestone in this folder.
+Save screenshots or command output for each milestone in this folder. The `.md`
+files in this directory list the exact commands to run and the evidence to
+capture from the local Ubuntu VM.
 
 Recommended evidence:
 
-- `01-ubuntu-version.png` or `.txt`: `cat /etc/os-release`
-- `02-repo-structure.png` or `.txt`: repository tree
-- `03-provision-first-run.png` or `.txt`: first `sudo ./scripts/provision.sh`
-- `04-service-status.png` or `.txt`: `systemctl status infra-demo`
-- `05-health-endpoint.png` or `.txt`: `curl localhost:8080/health`
-- `06-service-logs.png` or `.txt`: `journalctl -u infra-demo`
-- `07-firewall-status.png` or `.txt`: `sudo ufw status verbose`
-- `08-timer-status.png` or `.txt`: `systemctl list-timers`
-- `09-permissions.png` or `.txt`: `stat /etc/infra-demo.env`
-- `10-validate-before-reboot.png` or `.txt`: validation before reboot
-- `11-validate-after-reboot.png` or `.txt`: validation after reboot
+- `milestone-1-setup.png` or `.txt`: OS version, repo structure, first provisioning run
+- `milestone-2-service.png` or `.txt`: systemd status, health endpoint, service logs
+- `milestone-3-hardening.png` or `.txt`: firewall, SSH hardening, timer, permissions, idempotency
+- `final-reboot-validation.png` or `.txt`: validation before and after reboot
 
 You can also run:
 

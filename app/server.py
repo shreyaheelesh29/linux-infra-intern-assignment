@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
 import os
+from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 
@@ -20,7 +21,20 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(payload)
 
     def log_message(self, format, *args):
-        print("%s - - %s" % (self.address_string(), format % args), flush=True)
+        message = "%s - - %s" % (self.address_string(), format % args)
+        print(message, flush=True)
+
+        log_dir = os.environ.get("LOG_DIR")
+        if not log_dir:
+            return
+
+        try:
+            os.makedirs(log_dir, exist_ok=True)
+            timestamp = datetime.now(timezone.utc).isoformat()
+            with open(os.path.join(log_dir, "infra-demo.log"), "a", encoding="utf-8") as log_file:
+                log_file.write(f"{timestamp} {message}\n")
+        except OSError as exc:
+            print(f"could not write application log: {exc}", flush=True)
 
 
 def main():

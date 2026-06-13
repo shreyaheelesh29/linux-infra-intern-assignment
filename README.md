@@ -1,6 +1,8 @@
 # Linux Server Provisioning and Hardening Lab
 
-This repository automates the setup of a deployment-ready Ubuntu Server 24.04 VM.
+This repository automates the setup of a deployment-ready Ubuntu Server 24.04 VM
+running locally in VirtualBox, VMware, Hyper-V, UTM, or a similar local
+virtualization tool.
 
 ## Architecture
 
@@ -26,11 +28,23 @@ GET /health -> {"status":"healthy"}
 ## Requirements
 
 - Ubuntu Server 24.04 LTS
+- Local VM only; do not use AWS, Azure, Google Cloud, DigitalOcean, Linode, Oracle Cloud, or another cloud VM
 - 4 GB RAM
 - 2 CPU cores
 - 25 GB disk
 - Internet access during provisioning
 - A user with sudo privileges
+
+## Assumptions
+
+- The target VM is a fresh Ubuntu Server 24.04 LTS install.
+- The provisioning script is run inside the VM, not on the personal host machine.
+- The default hostname and timezone are left unchanged to avoid surprising VM-wide changes.
+- To opt in to hostname or timezone changes, run:
+
+```bash
+sudo INFRA_HOSTNAME=infra-demo INFRA_TIMEZONE=UTC ./scripts/provision.sh
+```
 
 ## Repository Layout
 
@@ -50,7 +64,7 @@ Inside the Ubuntu VM:
 ```bash
 sudo apt update
 sudo apt install -y git
-git clone <your-repository-url>
+git clone https://github.com/shreyaheelesh29/linux-infra-intern-assignment.git
 cd linux-infra-intern-assignment
 ```
 
@@ -79,6 +93,7 @@ sudo ./scripts/validate.sh
 The script checks:
 
 - Ubuntu version
+- hostname, timezone, uptime, and last boot context
 - installed packages
 - operational user
 - service active and enabled state
@@ -87,6 +102,7 @@ The script checks:
 - UFW firewall
 - SSH hardening
 - environment file permissions
+- controlled log directory permissions
 - maintenance timer
 - recent service logs
 
@@ -145,9 +161,43 @@ Check the timer:
 systemctl list-timers infra-maintenance.timer --no-pager
 ```
 
+More troubleshooting steps are in `docs/troubleshooting.md`.
+
+## Evidence
+
+Capture evidence from inside the local Ubuntu VM. Recommended files are listed in
+`evidence/README.md`, including:
+
+- `milestone-1-setup`
+- `milestone-2-service`
+- `milestone-3-hardening`
+- `final-reboot-validation`
+
+You can collect text evidence with:
+
+```bash
+./scripts/capture-evidence.sh
+```
+
+Screenshots should show the VM terminal, not the personal host machine.
+
+## Demo Video
+
+Record a 1-3 minute demo from the local VM showing:
+
+- repository structure
+- `sudo ./scripts/provision.sh`
+- `curl localhost:8080/health`
+- `sudo ./scripts/validate.sh`
+- reboot
+- `sudo ./scripts/validate.sh` after reboot
+
+Demo video link: add the final recording link here before submission.
+
 ## AI Assistance Notes
 
 AI assistance was used to draft the automation scripts, systemd units, validation
-checks, and documentation. The implementation should still be tested manually in
-the target Ubuntu Server 24.04 VM and evidence screenshots should be captured from
-that VM.
+checks, and documentation. The Python health endpoint was smoke-tested locally,
+and the full provisioning flow should be manually verified inside the target
+Ubuntu Server 24.04 VM. Evidence screenshots and the demo video should be
+captured from that VM.

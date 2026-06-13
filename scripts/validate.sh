@@ -33,6 +33,13 @@ if [[ -r /etc/os-release ]]; then
 else
   fail "/etc/os-release readable"
 fi
+echo "Hostname: $(hostname)"
+echo "Timezone: $(timedatectl show -p Timezone --value 2>/dev/null || echo unknown)"
+
+echo
+echo "== Reboot Context =="
+uptime
+who -b 2>/dev/null || true
 
 echo
 echo "== Packages =="
@@ -110,6 +117,14 @@ if [[ -f /etc/infra-demo.env ]]; then
 else
   fail "/etc/infra-demo.env exists"
 fi
+if [[ -d /var/log/infra-demo ]]; then
+  LOG_OWNER_GROUP="$(stat -c '%U:%G' /var/log/infra-demo)"
+  LOG_MODE="$(stat -c '%a' /var/log/infra-demo)"
+  [[ "${LOG_OWNER_GROUP}" == "root:root" ]] && pass "/var/log/infra-demo owned by root:root" || fail "/var/log/infra-demo owned by root:root"
+  [[ "${LOG_MODE}" == "755" ]] && pass "/var/log/infra-demo mode is 755" || fail "/var/log/infra-demo mode is 755"
+else
+  fail "/var/log/infra-demo exists"
+fi
 
 echo
 echo "== Maintenance Timer =="
@@ -120,6 +135,13 @@ systemctl list-timers infra-maintenance.timer --no-pager || true
 echo
 echo "== Recent Logs =="
 journalctl -u infra-demo.service -n 20 --no-pager || true
+if [[ -f /var/log/infra-demo/infra-demo.log ]]; then
+  echo
+  echo "== Application Log File =="
+  tail -n 20 /var/log/infra-demo/infra-demo.log || true
+else
+  echo "Application log file will appear after the first handled request."
+fi
 
 echo
 echo "== Summary =="
