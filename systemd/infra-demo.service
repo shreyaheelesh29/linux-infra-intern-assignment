@@ -1,0 +1,16 @@
+[Unit]
+Description=Infrastructure Demo Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=/etc/infra-demo.env
+ExecStart=/usr/bin/python3 /opt/infra-demo/server.py
+Restart=always
+RestartSec=3
+User=root
+Group=root
+WorkingDirectory=/opt/infra-demo
+
+[Install]
+WantedBy=multi-user.target

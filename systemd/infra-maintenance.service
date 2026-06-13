@@ -1,0 +1,7 @@
+[Unit]
+Description=Infra Maintenance
+After=infra-demo.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/infra-demo/maintenance.sh
